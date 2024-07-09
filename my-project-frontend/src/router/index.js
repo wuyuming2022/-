@@ -27,6 +27,21 @@ const router = createRouter({
             path: '/index',
             name: 'index',
             component: () => import('@/views/IndexView.vue'),
+            children: [
+                {
+                    path: 'user-setting',
+                    name: 'user-setting',
+                    component: () => import('@/views/settings/UserSetting.vue')
+                }, {
+                    path: 'register',
+                    name: 'welcome-register',
+                    component: () => import('@/views/welcome/RegisterPage.vue')
+                }, {
+                    path: 'forget',
+                    name: 'welcome-forget',
+                    component: () => import('@/views/welcome/ForgetPage.vue')
+                }
+            ],
         }
     ]
 })
