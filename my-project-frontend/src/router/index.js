@@ -32,14 +32,6 @@ const router = createRouter({
                     path: 'user-setting',
                     name: 'user-setting',
                     component: () => import('@/views/settings/UserSetting.vue')
-                }, {
-                    path: 'register',
-                    name: 'welcome-register',
-                    component: () => import('@/views/welcome/RegisterPage.vue')
-                }, {
-                    path: 'forget',
-                    name: 'welcome-forget',
-                    component: () => import('@/views/welcome/ForgetPage.vue')
                 }
             ],
         }
@@ -48,9 +40,9 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     const isUnauthorized = unauthorized()
-    if(to.name.startsWith('welcome') && !isUnauthorized) {
+    if(to.name !== undefined && to.name.startsWith('welcome') && !isUnauthorized) {
         next('/index')
-    } else if(to.fullPath.startsWith('/index') && isUnauthorized) {
+    } else if(to.fullPath !== undefined && to.fullPath.startsWith('/index') && isUnauthorized) {
         next('/')
     } else {
         next()
