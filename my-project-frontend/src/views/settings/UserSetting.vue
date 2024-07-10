@@ -1,7 +1,7 @@
 <script setup>
 
 import Card from "@/components/Card.vue";
-import {Message, Notebook, Refresh, Select, User} from "@element-plus/icons-vue";
+import {Message, Refresh, Select, User} from "@element-plus/icons-vue";
 import {useStore} from "@/store";
 import {computed, reactive, ref} from "vue";
 import {ElMessage} from "element-plus";
@@ -92,29 +92,33 @@ const onValidate = (prop, isValid) => {
 }
 function sendEmailCode() {
   emailFormRef.value.validate(isValid => {
-    coldTime.value = 60
-    get(`/api/auth/ask-code?email=${emailForm.email}&type=modify`, () =>{
-      ElMessage.success(`验证码已成功发送到邮箱:${emailForm.email}，请查收`)
-      const handle =setInterval(() => {
-        coldTime.value--
-        if(coldTime.value === 0){
-          clearInterval(handle)
-        }
-      },1000)
-    }, (message) => {
-      ElMessage.warning(message)
-      coldTime.value = 0
-    })
+    if(isValid){
+      coldTime.value = 60
+      get(`/api/auth/ask-code?email=${emailForm.email}&type=modify`, () =>{
+        ElMessage.success(`验证码已成功发送到邮箱:${emailForm.email}，请查收`)
+        const handle =setInterval(() => {
+          coldTime.value--
+          if(coldTime.value === 0){
+            clearInterval(handle)
+          }
+        },1000)
+      }, (message) => {
+        ElMessage.warning(message)
+        coldTime.value = 0
+      })
+    }
   })
 }
 
 function modifyEmail() {
   emailFormRef.value.validate(isValid => {
-    post('/api/user/modify-email', emailForm, () =>{
-      ElMessage.success(`邮件修改成功`)
-      store.user.email = emailForm.email
-      emailForm.code = ''
-    })
+    if(isValid) {
+      post('/api/user/modify-email', emailForm, () =>{
+        ElMessage.success(`邮件修改成功`)
+        store.user.email = emailForm.email
+        emailForm.code = ''
+      })
+    }
   })
 
 }
