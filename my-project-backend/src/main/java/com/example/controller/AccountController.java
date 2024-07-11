@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.entity.RestBean;
 import com.example.entity.dto.Account;
 import com.example.entity.dto.AccountDetails;
+import com.example.entity.vo.request.ChangePasswordVO;
 import com.example.entity.vo.request.DetailsSaveVO;
 import com.example.entity.vo.request.ModifyEmailVO;
 import com.example.entity.vo.response.AccountDetailsVO;
@@ -15,6 +16,7 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 
 @RestController
@@ -51,10 +53,26 @@ public class AccountController {
     @PostMapping("/modify-email")
     public RestBean<Void> modifyEmail(@RequestAttribute(Const.ATTR_USER_ID) int id,
                                       @RequestBody @Valid ModifyEmailVO vo){
-
-        String result = service.modifyEmail(id, vo);
-        return result == null ? RestBean.success() : RestBean.failure(400, result);
+        return this.messageHandle(() -> service.modifyEmail(id, vo));
     }
 
+    @PostMapping("/change-password")
+    public RestBean<Void> changePassword(@RequestAttribute(Const.ATTR_USER_ID) int id,
+                                         @RequestBody @Valid ChangePasswordVO vo){
+        return this.messageHandle(() -> service.changePassword(id, vo));
+    }
 
+    /**
+     * 针对于返回值为String作为错误信息的方法进行统一处理
+     * @param action 具体操作
+     * @return 响应结果
+     * @param <T> 响应结果类型
+     */
+    private <T> RestBean<T> messageHandle(Supplier<String> action){
+        String message = action.get();
+        if(message == null)
+            return RestBean.success();
+        else
+            return RestBean.failure(400, message);
+    }
 }
