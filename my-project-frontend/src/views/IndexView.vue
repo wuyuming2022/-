@@ -58,7 +58,7 @@ function userLogout() {
             <div>{{ store.user.email }}</div>
           </div>
           <el-dropdown>
-            <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+            <el-avatar :src="store.avatarUrl"></el-avatar>
             <template #dropdown>
               <el-dropdown-item>
                 <el-icon><Operation/></el-icon>

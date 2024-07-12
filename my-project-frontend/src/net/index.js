@@ -3,7 +3,7 @@ import {ElMessage} from "element-plus";
 
 const authItemName = "authorize"
 
-const accessHeader = () => {
+export const accessHeader = () => {
     return {
         'Authorization': `Bearer ${takeAccessToken()}`
     }
