@@ -43,3 +43,9 @@ spring:
       origin: '*'
       credentials: false
       methods: '*'
+  minio:
+    endpoint: 'http://localhost:9000'
+    username: 'minio'
+    password: 'password'
+  weather:
+    key: '45294679ef6f4cd9908ef652fe081f3d'

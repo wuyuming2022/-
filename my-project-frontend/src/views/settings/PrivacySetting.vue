@@ -70,7 +70,7 @@ get('/api/user/privacy', data => {
 function savePrivacy(type, status){
   saving.value = true
   post('/api/user/save-privacy', {type, status}, () => {
-    ElMessage.success('隐私设置司改成功!')
+    ElMessage.success('隐私设置修改成功!')
     saving.value = false
   })
 }

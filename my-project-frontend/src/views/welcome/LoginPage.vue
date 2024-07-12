@@ -51,7 +51,7 @@
 <script setup>
 import {User, Lock} from '@element-plus/icons-vue'
 import router from "@/router";
-import {reactive, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import {login} from '@/net'
 
 const formRef = ref()
@@ -77,6 +77,19 @@ function userLogin() {
     }
   });
 }
+
+
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown);
+});
+/**
+ * 当用户按下回车键时，触发登录操作
+ */
+const handleKeydown = (event) => {
+  if (event.key === 'Enter') {
+    userLogin();
+  }
+};
 </script>
 
 <style scoped>
