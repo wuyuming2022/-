@@ -3,9 +3,10 @@
 import LightCard from "@/components/LightCard.vue";
 import {Calendar, CollectionTag, Edit, EditPen, Link} from "@element-plus/icons-vue";
 import Weathier from "@/components/Weathier.vue";
-import {computed, reactive} from "vue";
+import {computed, reactive, ref} from "vue";
 import {get} from "@/net";
 import {ElMessage} from "element-plus";
+import TopicEditor from "@/components/TopicEditor.vue";
 
 const weather = reactive({
   location: {},
@@ -14,9 +15,14 @@ const weather = reactive({
   success: false
 })
 
+
+
+const editor = ref(false)
+
 const today = computed(() => {
   const date = new Date()
-  return `${date.getFullYear()} 年 ${date.getMonth()} 月 ${date.getDay()} 日`
+  const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+  return `${date.getFullYear()} 年 ${date.getMonth() + 1} 月 ${date.getDate()} 日 星期${weekDays[date.getDay()]}`
 })
 /**
  * 获取当前位置（谷歌浏览器不好使）
@@ -32,7 +38,7 @@ navigator.geolocation.getCurrentPosition(position => {
   })
 }, error =>{
   console.info(error)
-  ElMessage.warning('位置信息获取超时，请检查网络设置')
+  // ElMessage.warning('位置信息获取超时，请检查网络设置')
   get(`/api/forum/weather?longitude=121.593474&latitude=38.948706`, data =>{
     Object.assign(weather, data)
     weather.success = true
@@ -47,7 +53,7 @@ navigator.geolocation.getCurrentPosition(position => {
   <div style="display: flex;margin: 20px auto;gap: 20px;max-width: 900px;">
     <div style="flex: 1">
       <light-card>
-        <div class="create-topic">
+        <div class="create-topic" @click="editor = true">
           <el-icon><EditPen/></el-icon> 点击发表主题...
         </div>
       </light-card>
@@ -78,7 +84,7 @@ navigator.geolocation.getCurrentPosition(position => {
             <el-icon><Calendar/></el-icon>
             天气信息
           </div>
-          <div style="font-size: 10px;color: grey">谷歌浏览器获取不了当前天气情况,请使用其他浏览器</div>
+          <div style="font-size: 10px;color: grey">谷歌浏览器无法获取当前位置的天气,请使用其他浏览器</div>
           <el-divider style="margin: 10px 0;"/>
           <weathier :data="weather"/>
         </light-card>
@@ -111,6 +117,7 @@ navigator.geolocation.getCurrentPosition(position => {
         </div>
       </div>
     </div>
+    <topic-editor :show="editor" @success="editor = false" @close="editor = false"/>
   </div>
 </template>
 
@@ -137,5 +144,8 @@ navigator.geolocation.getCurrentPosition(position => {
   &:hover {
     cursor: pointer;
   }
+}
+.dark .create-topic {
+  background-color: #232323;
 }
 </style>

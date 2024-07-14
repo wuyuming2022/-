@@ -22,5 +22,11 @@ public final class Const {
     public final static String MQ_MAIL = "mail";
     //用户角色
     public final static String ROLE_DEFAULT = "user";
+    //论坛天气
+    public final static String FORUM_WERTHER_CACHE = "weather:cache:";
+    //论坛图片
+    public final static String FORUM_IMAGE_COUNTER = "forum:image:";
+    //
+    public final static String FORUM_TOPIC_CREATE_COUNTER = "forum:topic:create:";
 
 }

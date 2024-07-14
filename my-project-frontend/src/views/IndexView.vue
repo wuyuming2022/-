@@ -82,6 +82,7 @@ function userLogout() {
             <el-menu
                 router
                 style="min-height: calc(100vh - 55px)"
+                :default-openeds="['1','2','3']"
                 :default-active="$route.path">
               <el-sub-menu index="1">
                 <template #title>

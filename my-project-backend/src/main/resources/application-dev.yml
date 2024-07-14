@@ -33,7 +33,7 @@ spring:
       mail-limit: 60
     flow:
       period: 3
-      limit: 50
+      limit: 100
       block: 30
     cors:
       origin: '*'
