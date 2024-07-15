@@ -28,6 +28,6 @@ export const useStore = defineStore('general', {
                 if(type.id === id)
                     return type
             }
-        }
+        },
     }
 });
