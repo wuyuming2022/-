@@ -18,9 +18,13 @@ import com.example.utils.FlowUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,6 +42,8 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     AccountDetailsMapper accountDetailsMapper;
     @Resource
     AccountPrivacyMapper accountPrivacyMapper;
+    @Resource
+    StringRedisTemplate template;
 
     private Set<Integer> types = null;
     @PostConstruct
@@ -82,9 +88,9 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         if(list != null) return list;
         Page<Topic> page = Page.of(pageNumber, 10);
         if(type == 0)
-            baseMapper.selectPage(page, Wrappers.<Topic>query().orderByDesc("time"));
+            page = baseMapper.selectPage(page, Wrappers.<Topic>query().orderByDesc("time"));
         else
-            baseMapper.selectPage(page, Wrappers.<Topic>query().eq("type", type).orderByDesc("time"));
+            page = baseMapper.selectPage(page, Wrappers.<Topic>query().eq("type", type).orderByDesc("time"));
         List<Topic> topics = page.getRecords();
         if(topics.isEmpty()) return null;
         list = topics.stream().map(this::resolveToOreview).toList();
@@ -112,6 +118,49 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
         TopicDetailVO.User user = new TopicDetailVO.User();
         vo.setUser(this.fillUserDetailsByPrivacy(user, topic.getUid()));
         return vo;
+    }
+
+    @Override
+    public void interact(Interact interact, boolean state) {
+        String type = interact.getType();
+        synchronized (type.intern()) {
+            template.opsForHash().put(type,interact.toKey(),Boolean.toString(state));
+            this.saveInteractSchedule(type);
+        }
+    }
+
+    private final Map<String, Boolean> state = new HashMap<>();
+    ScheduledExecutorService service = Executors.newScheduledThreadPool(2);
+    private void saveInteractSchedule(String type) {
+        if(!state.getOrDefault(type, false)) {
+            state.put(type, true);
+            service.schedule(() -> {
+                this.saveInteract(type);
+                state.put(type, false);
+            }, 3, TimeUnit.SECONDS);
+        }
+    }
+
+    private void saveInteract(String type) {
+        synchronized (type.intern()) {
+            List<Interact> check = new LinkedList<>();
+            List<Interact> uncheck = new LinkedList<>();
+            try {
+                template.opsForHash().entries(type).forEach((k, v) -> {
+                    if (Boolean.parseBoolean(v.toString()))
+                        check.add(Interact.parseInteract(k.toString(), type));
+                    else
+                        uncheck.add(Interact.parseInteract(k.toString(), type));
+                });
+                if(!check.isEmpty())
+                    baseMapper.addInteract(check, type);
+                if(!uncheck.isEmpty())
+                    baseMapper.deleteInteract(uncheck, type);
+                template.delete(type);
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private <T> T fillUserDetailsByPrivacy(T target, int uid){
