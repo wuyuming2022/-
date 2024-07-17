@@ -82,7 +82,7 @@ function userLogout() {
             <el-menu
                 router
                 style="min-height: calc(100vh - 55px)"
-                :default-openeds="['1','2','3']"
+                :default-openeds="['1','2','4']"
                 :default-active="$route.path">
               <el-sub-menu index="1">
                 <template #title>
@@ -159,6 +159,25 @@ function userLogout() {
                 </el-menu-item>
               </el-sub-menu>
               <el-sub-menu index="3">
+                <template #title>
+                  <el-icon><Orange /></el-icon>
+                  <span><b>管理系统</b></span>
+                </template>
+
+                <el-menu-item index="/index/user-setting">
+                  <template #title>
+                    <el-icon><User/></el-icon>
+                    员工管理
+                  </template>
+                </el-menu-item>
+                <el-menu-item index="/index/privacy-setting">
+                  <template #title>
+                    <el-icon><Setting /></el-icon>
+                    考勤记录
+                  </template>
+                </el-menu-item>
+              </el-sub-menu>
+              <el-sub-menu index="4">
                 <template #title>
                   <el-icon><Orange /></el-icon>
                   <span><b>个人设置</b></span>

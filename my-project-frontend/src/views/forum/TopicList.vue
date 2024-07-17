@@ -19,6 +19,8 @@ import TopicEditor from "@/components/TopicEditor.vue";
 import {useStore} from "@/store";
 import axios from "axios";
 import ColorDot from "@/components/ColorDot.vue";
+import router from "@/router";
+import TopicTag from "@/components/TopicTag.vue";
 
 const store = useStore()
 
@@ -38,6 +40,8 @@ const topics = reactive({
   end: false
 })
 
+const currentTime = ref(getCurrentTime())
+
 watch(() => topics.type, () => {
   resetList()
 }, {immediate: true})
@@ -47,11 +51,16 @@ const today = computed(() => {
   const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
   return `${date.getFullYear()} 年 ${date.getMonth() + 1} 月 ${date.getDate()} 日 星期${weekDays[date.getDay()]}`
 })
-get('/api/forum/types', data => {
-  const array = [{ name: '全部', id: 0, color: 'linear-gradient(45deg, white, red, orange, gold, green, blue)' }];
-  data.forEach(d => array.push(d));
-  store.forum.types = array;
-});
+
+setInterval(() => {
+  currentTime.value = getCurrentTime()
+}, 1000)
+
+function getCurrentTime(){
+  const date = new Date()
+  return `${date.getHours()} 时 ${date.getMinutes()} 分 ${date.getSeconds()} 秒`
+}
+
 
 get('/api/forum/top-topic', data => topics.top = data)
 function updateList(){
@@ -86,7 +95,6 @@ navigator.geolocation.getCurrentPosition(position => {
   const longitude = position.coords.longitude
   const latitude = position.coords.latitude
   get(`/api/forum/weather?longitude=${longitude}&latitude=${latitude}`, data =>{
-    debugger
     Object.assign(weather, data)
     weather.success = true
   })
@@ -119,7 +127,7 @@ navigator.geolocation.getCurrentPosition(position => {
         </div>
       </light-card>
       <light-card style="margin-top: 10px;display: flex;flex-direction: column;gap: 10px">
-        <div v-for="item in topics.top" class="top-topic">
+        <div v-for="item in topics.top" class="top-topic" @click="router.push(`/index/topic-detail/${item.id}`)">
           <el-tag type="info" size="small">置顶</el-tag>
           <div>{{item.title}}</div>
           <div>{{new Date(item.time).toLocaleDateString()}}</div>
@@ -137,7 +145,7 @@ navigator.geolocation.getCurrentPosition(position => {
         <div v-if="topics.list.length">
           <div style="margin-top: 10px;display: flex;flex-direction: column;gap: 10px;"
                 v-infinite-scroll="updateList">
-            <light-card  v-for="item in topics.list" class="topic-card">
+            <light-card  v-for="item in topics.list" class="topic-card" @click="router.push('/index/topic-detail/'+item.id)">
               <div>
                 <div style="display: flex">
                   <div>
@@ -153,24 +161,15 @@ navigator.geolocation.getCurrentPosition(position => {
                 </div>
               </div>
               <div style="margin-top: 5px;">
-<!--                <div class="tipic-type"
-                     :style="{
-                  color: store.findTypeById(item.type)?.color + 'EE',
-                  'border-color': store.findTypeById(item.type)?.color + '77',
-                  'background': store.findTypeById(item.type)?.color + '33',
-                 }">
-                  {{store.findTypeById(item.type).name}}
-                </div>-->
-
-                <div v-if="store.findTypeById(item.type)" class="tipic-type"
-                     :style="{
-                       color: store.findTypeById(item.type)?.color + 'EE',
-                       'border-color': store.findTypeById(item.type)?.color + '77',
-                       'background': store.findTypeById(item.type)?.color + '33'
-                     }">
-                  {{ store.findTypeById(item.type)?.name }}
-                </div>
-
+<!--                <div class="tipic-type"-->
+<!--                     :style="{-->
+<!--                       color: store.findTypeById(item.type)?.color + 'EE',-->
+<!--                       'border-color': store.findTypeById(item.type)?.color + '77',-->
+<!--                       'background': store.findTypeById(item.type)?.color + '33'-->
+<!--                     }">-->
+<!--                  {{ store.findTypeById(item.type)?.name }}-->
+<!--                </div>-->
+                <topic-tag :type="item.type"/>
                 <span style="font-weight: bold;margin-left: 7px;">{{item.title}}</span>
               </div>
               <div class="top-content">{{item.text}}</div>
@@ -209,6 +208,10 @@ navigator.geolocation.getCurrentPosition(position => {
             <div>{{today}}</div>
           </div>
           <div class="info-text">
+            <div>当前时间 :</div>
+            <div>{{currentTime}}</div>
+          </div>
+          <div class="info-text">
             <div>当前ip地址 :</div>
             <div>127.0.0.1（写死了还没改）</div>
           </div>
@@ -220,15 +223,14 @@ navigator.geolocation.getCurrentPosition(position => {
         </div>
         <div style="display: grid;grid-template-columns: repeat(2, 1fr);grid-gap: 10px;margin-top: 10px;">
           <div class="friend-link">
-            <el-image style="height: 100%" src="https://element-plus.org/images/js-design-banner.jpg"></el-image>
+            <el-link  style="height: 100%"  href="https://element-plus.org" target="_blank"><el-image style="height: 100%" src="https://element-plus.org/images/js-design-banner.jpg"/></el-link>
           </div>
           <div class="friend-link">
-            <el-image style="height: 100%" src="https://element-plus.org/images/js-design-banner.jpg"></el-image>
+            <el-link style="height: 100%" href="https://www.baidu.com" target="_blank"><el-image style="height: 100%" src="https://element-plus.org/images/js-design-banner.jpg"/></el-link>
           </div>
           <div class="friend-link">
-            <el-image style="height: 100%" src="https://element-plus.org/images/js-design-banner.jpg"></el-image>
+            <el-link  style="height: 100%"  href="https://yiyan.baidu.com/" target="_blank"><el-image style="height: 100%" src="https://element-plus.org/images/js-design-banner.jpg"/></el-link>
           </div>
-
         </div>
       </div>
     </div>
@@ -299,14 +301,7 @@ navigator.geolocation.getCurrentPosition(position => {
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .tipic-type {
-    display: inline-block;
-    border: solid 0.5px grey;
-    border-radius: 3px;
-    font-size: 12px;
-    padding: 0 5px;
-    height: 18px;
-  }
+
   .topic-image {
     width: 100%;
     height: 100%;
