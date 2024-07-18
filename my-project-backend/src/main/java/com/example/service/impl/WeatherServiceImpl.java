@@ -45,7 +45,7 @@ public class WeatherServiceImpl implements WeatherService {
         JSONObject geo = decompressStringTOJson(data);
         if(geo == null) return null;
         JSONObject location = geo.getJSONArray("location").getJSONObject(0);
-        int id = location.getInteger("id");
+        String id = location.getString("id");
         String key = Const.FORUM_WERTHER_CACHE+id;
         String cache = template.opsForValue().get(key);
         if(cache != null)
@@ -56,7 +56,7 @@ public class WeatherServiceImpl implements WeatherService {
         return vo;
     }
 
-    private WeatherVO fetchFromApi(int id, JSONObject location){
+    private WeatherVO fetchFromApi(String id, JSONObject location){
         WeatherVO vo = new WeatherVO();
         vo.setLocation(location);
         byte[] data = rest.getForObject(
