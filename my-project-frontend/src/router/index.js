@@ -44,6 +44,10 @@ const router = createRouter({
                         }
                     ]
                 },{
+                    path: 'staff',
+                    name: 'staff',
+                    component: () => import('@/views/staff/Staff.vue')
+                },{
                     path: 'user-setting',
                     name: 'user-setting',
                     component: () => import('@/views/settings/UserSetting.vue')

@@ -164,7 +164,7 @@ function userLogout() {
                   <span><b>管理系统</b></span>
                 </template>
 
-                <el-menu-item index="/index/user-setting">
+                <el-menu-item index="/index/staff">
                   <template #title>
                     <el-icon><User/></el-icon>
                     员工管理
