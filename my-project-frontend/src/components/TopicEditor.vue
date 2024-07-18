@@ -13,8 +13,37 @@ import {useStore} from "@/store";
 
 const store = useStore()
 
-defineProps({
-  show: Boolean
+const props = defineProps({
+  show: Boolean,
+  defaultTitle: {
+    default: '',
+    type: String,
+  },
+  defaultText: {
+    default: '',
+    type: String,
+  },
+  defaultType: {
+    default: null,
+    type: Number,
+  },
+  submitButton: {
+    default: '立即发表主题',
+    type: String,
+  },
+  submit: {
+    default: (editor, success) => {
+      post('/api/forum/create-topic', {
+        type: editor.type.id,
+        title: editor.title,
+        content: editor.text
+      }, () => {
+        ElMessage.success('帖子发表成功！')
+        success()
+      })
+    },
+    type: Function
+  }
 })
 
 const emit = defineEmits(['close', 'success'])
@@ -29,9 +58,12 @@ const editor = reactive({
 })
 
 function initEditor(){
-  refEditor.value.setContents('', 'user')
-  editor.title = ''
-  editor.type = null
+  if(props.defaultText)
+    editor.text = new Delta(JSON.parse(props.defaultText))
+  else
+    refEditor.value.setContents('', 'user')
+  editor.title = props.defaultTitle
+  editor.type = findTypeById(props.defaultType)
 }
 
 function deltaToText(delta){
@@ -43,6 +75,13 @@ function deltaToText(delta){
 }
 
 const contentLength = computed(() => deltaToText(editor.text).length)
+
+function findTypeById(id){
+  for (let type of store.forum.types) {
+    if(type.id === id)
+      return type
+  }
+}
 
 function submitTopic(){
   const text = deltaToText(editor.text)
@@ -58,14 +97,7 @@ function submitTopic(){
     ElMessage.warning('请选择帖子类型！')
     return
   }
-  post('/api/forum/create-topic', {
-    type: editor.type.id,
-    title: editor.title,
-    content: editor.text
-  }, () => {
-    ElMessage.success('帖子发表成功！')
-    emit('success')
-  })
+  props.submit(editor, () => emit('success'))
 }
 
 Quill.register('modules/imageResize', ImageResize)
@@ -169,7 +201,7 @@ const editorOption = {
           当前字数 {{contentLength}} (最大支持20000字)
         </div>
         <div>
-          <el-button type="success" :icon="Check" @click="submitTopic" plain>立即发表主题</el-button>
+          <el-button type="success" :icon="Check" @click="submitTopic" plain>{{submitButton}}</el-button>
         </div>
       </div>
     </el-drawer>

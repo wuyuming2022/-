@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.entity.dto.*;
 import com.example.entity.vo.request.TopicCreateVO;
+import com.example.entity.vo.request.TopicUpdateVO;
 import com.example.entity.vo.response.TopicDetailVO;
 import com.example.entity.vo.response.TopicPreviewVO;
 import com.example.entity.vo.response.TopicTopVO;
@@ -82,6 +83,33 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     }
 
     @Override
+    public String updateTopic(int uid, TopicUpdateVO vo) {
+        if(!textLimitCheck(vo.getContent()))
+            return "文章内容太多，发文失败！";
+        if(!types.contains(vo.getType()))
+            return "文章类型非法！";
+        baseMapper.update(null, Wrappers.<Topic>update()
+                .eq("id", vo.getId())
+                .eq("id",vo.getId())
+                .set("title", vo.getTitle())
+                .set("content", vo.getContent().toString())
+                .set("type",vo.getType()));
+        return null;
+    }
+
+    @Override
+    public List<TopicPreviewVO> listTopicCollects(int uid) {
+        return baseMapper.collectTopics(uid)
+                .stream()
+                .map(topic -> {
+                    TopicPreviewVO vo = new TopicPreviewVO();
+                    BeanUtils.copyProperties(topic, vo);
+                    return vo;
+                })
+                .toList();
+    }
+
+    @Override
     public List<TopicPreviewVO> listTopicByPage(int pageNumber, int type) {
         String key = Const.FORUM_TOPIC_PREVIEW_CACHE + pageNumber + ":" + type;
         List<TopicPreviewVO> list = cacheUtils.takeListFromCache(key, TopicPreviewVO.class);
@@ -111,13 +139,13 @@ public class TopicServiceImpl extends ServiceImpl<TopicMapper, Topic> implements
     }
 
     @Override
-    public TopicDetailVO getTopic(int tid) {
+    public TopicDetailVO getTopic(int tid, int uid) {
         TopicDetailVO vo = new TopicDetailVO();
         Topic topic = baseMapper.selectById(tid);
         BeanUtils.copyProperties(topic, vo);
         TopicDetailVO.Interact interact = new TopicDetailVO.Interact(
-                hasInteract(tid, topic.getUid(),"like"),
-                hasInteract(tid, topic.getUid(),"collect")
+                hasInteract(tid, uid,"like"),
+                hasInteract(tid, uid,"collect")
         );
         vo.setInteract(interact);
         TopicDetailVO.User user = new TopicDetailVO.User();
