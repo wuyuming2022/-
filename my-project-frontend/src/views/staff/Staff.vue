@@ -86,7 +86,7 @@ function deleteStaff(id) {
 
     </card>
     <card :icon="Setting" title="查询结果" style="margin-top: 20px;"
-          desc="在这里显示查询结果列表" v-loading="">
+          desc="在这里显示查询结果" v-loading="">
       <div class="staff-table">
         <el-table :data="table.data" style="width: 100%" v-loading="table.loading">
           <el-table-column fixed prop="name" label="员工姓名" width="150"/>
