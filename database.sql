@@ -1,17 +1,17 @@
 /*
- Navicat MySQL Data Transfer
+ Navicat Premium Data Transfer
 
- Source Server         : 本地测试环境
+ Source Server         : localhost
  Source Server Type    : MySQL
- Source Server Version : 80034 (8.0.34)
+ Source Server Version : 80033
  Source Host           : localhost:3306
  Source Schema         : test
 
  Target Server Type    : MySQL
- Target Server Version : 80034 (8.0.34)
+ Target Server Version : 80033
  File Encoding         : 65001
 
- Date: 07/08/2023 00:03:19
+ Date: 20/07/2024 01:38:29
 */
 
 SET NAMES utf8mb4;
@@ -21,22 +21,159 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- Table structure for db_account
 -- ----------------------------
 DROP TABLE IF EXISTS `db_account`;
-CREATE TABLE `db_account` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) DEFAULT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `password` varchar(255) DEFAULT NULL,
-  `role` varchar(255) DEFAULT NULL,
-  `register_time` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `unique_email` (`email`),
-  UNIQUE KEY `unique_username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `db_account`  (
+                               `id` int NOT NULL AUTO_INCREMENT,
+                               `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                               `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                               `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                               `role` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                               `register_time` datetime NULL DEFAULT NULL,
+                               `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                               PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Records of db_account
+-- Table structure for db_account_details
 -- ----------------------------
-BEGIN;
-COMMIT;
+DROP TABLE IF EXISTS `db_account_details`;
+CREATE TABLE `db_account_details`  (
+                                       `id` int NOT NULL,
+                                       `gender` tinyint NULL DEFAULT NULL,
+                                       `phone` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                                       `qq` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                                       `wx` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                                       `desc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                                       PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for db_account_privacy
+-- ----------------------------
+DROP TABLE IF EXISTS `db_account_privacy`;
+CREATE TABLE `db_account_privacy`  (
+                                       `id` int NOT NULL,
+                                       `phone` tinyint NULL DEFAULT NULL,
+                                       `email` tinyint NULL DEFAULT NULL,
+                                       `wx` tinyint NULL DEFAULT NULL,
+                                       `qq` tinyint(3) UNSIGNED ZEROFILL NULL DEFAULT NULL,
+                                       `gender` tinyint NULL DEFAULT NULL,
+                                       PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for db_image_store
+-- ----------------------------
+DROP TABLE IF EXISTS `db_image_store`;
+CREATE TABLE `db_image_store`  (
+                                   `uid` int NULL DEFAULT NULL,
+                                   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                                   `time` datetime NULL DEFAULT NULL
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for db_notification
+-- ----------------------------
+DROP TABLE IF EXISTS `db_notification`;
+CREATE TABLE `db_notification`  (
+                                    `id` int NOT NULL AUTO_INCREMENT,
+                                    `uid` int NULL DEFAULT NULL,
+                                    `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                                    `content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                                    `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                                    `time` datetime NULL DEFAULT NULL,
+                                    `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                                    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for db_staff
+-- ----------------------------
+DROP TABLE IF EXISTS `db_staff`;
+CREATE TABLE `db_staff`  (
+                             `id` int NOT NULL AUTO_INCREMENT,
+                             `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                             `gender` tinyint NULL DEFAULT NULL,
+                             `department` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                             `time` datetime NULL DEFAULT NULL,
+                             PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for db_topic
+-- ----------------------------
+DROP TABLE IF EXISTS `db_topic`;
+CREATE TABLE `db_topic`  (
+                             `id` int NOT NULL AUTO_INCREMENT,
+                             `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                             `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+                             `uid` int NULL DEFAULT NULL,
+                             `type` int NULL DEFAULT NULL,
+                             `time` datetime NULL DEFAULT NULL,
+                             `top` tinyint NULL DEFAULT 0,
+                             PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 19 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for db_topic_comment
+-- ----------------------------
+DROP TABLE IF EXISTS `db_topic_comment`;
+CREATE TABLE `db_topic_comment`  (
+                                     `id` int NOT NULL AUTO_INCREMENT,
+                                     `uid` int NULL DEFAULT NULL,
+                                     `tid` int NULL DEFAULT NULL,
+                                     `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
+                                     `time` datetime NULL DEFAULT NULL,
+                                     `quote` int NULL DEFAULT NULL,
+                                     PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for db_topic_interact_collect
+-- ----------------------------
+DROP TABLE IF EXISTS `db_topic_interact_collect`;
+CREATE TABLE `db_topic_interact_collect`  (
+                                              `tid` int NULL DEFAULT NULL,
+                                              `uid` int NULL DEFAULT NULL,
+                                              `time` datetime NULL DEFAULT NULL,
+                                              UNIQUE INDEX `tid_uid_collect`(`tid` ASC, `uid` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for db_topic_interact_like
+-- ----------------------------
+DROP TABLE IF EXISTS `db_topic_interact_like`;
+CREATE TABLE `db_topic_interact_like`  (
+                                           `tid` int UNSIGNED NULL DEFAULT NULL,
+                                           `uid` int NULL DEFAULT NULL,
+                                           `time` datetime NULL DEFAULT NULL,
+                                           UNIQUE INDEX `tid_uid_like`(`tid` ASC, `uid` ASC) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for db_topic_type
+-- ----------------------------
+DROP TABLE IF EXISTS `db_topic_type`;
+CREATE TABLE `db_topic_type`  (
+                                  `id` int NOT NULL AUTO_INCREMENT,
+                                  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                                  `desc` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                                  `color` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                                  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for menu
+-- ----------------------------
+DROP TABLE IF EXISTS `menu`;
+CREATE TABLE `menu`  (
+                         `id` int NOT NULL AUTO_INCREMENT,
+                         `menu_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                         `order1` int NULL DEFAULT NULL,
+                         `router` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                         `role` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                         `register_time` datetime NULL DEFAULT NULL,
+                         `delete_flag` varchar(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+                         PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 SET FOREIGN_KEY_CHECKS = 1;
