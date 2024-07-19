@@ -3,6 +3,7 @@ package com.example.entity.vo.response;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class CommentVO {
@@ -10,4 +11,17 @@ public class CommentVO {
     String content;
     Date time;
     String quote;
+    User user;
+
+    @Data
+    public static class User {
+        Integer id;
+        String username;
+        String avatar;
+        boolean gender;
+        String qq;
+        String wx;
+        String phone;
+        String email;
+    }
 }

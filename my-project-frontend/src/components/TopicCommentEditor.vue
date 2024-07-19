@@ -1,5 +1,5 @@
 <script setup>
-import {QuillEditor} from "@vueup/vue-quill";
+import {Delta, QuillEditor} from "@vueup/vue-quill";
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import {ref} from "vue";
 import {post} from "@/net";
@@ -13,7 +13,9 @@ const props = defineProps({
 
 const content = ref()
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'comment'])
+
+const init = () => content.value = new Delta()
 
 function submitComment(){
   post('/api/forum/add-comment', {
@@ -22,7 +24,7 @@ function submitComment(){
     content: JSON.stringify(content.value)
   },() => {
     ElMessage.success('发表评论成功')
-    emit('close')
+    emit('comment')
   })
 }
 
@@ -31,7 +33,7 @@ function submitComment(){
 <template>
   <div>
     <el-drawer :model-value="show"
-               title="发表评论"
+               title="发表评论" @open="init"
                @close="emit('close')"
                direction="btt" :size="270"
                :close-on-click-modal="false">
